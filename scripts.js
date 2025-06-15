@@ -61,10 +61,6 @@ function window95(x, y, width, height, title) {
             isDraggingWindow = false;
         }
     }
-
-    document.addEventListener("mousedown", function(event) {
-        
-    });
 }
 
 // Taskbar dimensions
