@@ -29,7 +29,6 @@ function window95(x, y, width, height, title, name) {
     // Local variables
     let dragOffsetX;
     let dragOffsetY;
-    let isDraggingWindow;
 
     // Constructor variables
     this.x = x;
@@ -66,6 +65,7 @@ function window95(x, y, width, height, title, name) {
 
         // Drag check
         this.dragCheck();
+        this.bound();
     }
 
     // Check dragging
@@ -84,8 +84,6 @@ function window95(x, y, width, height, title, name) {
                 draggingWindow = null;
             }
         }
-
-        this.bound();
     }
 
     // Bound window
@@ -169,6 +167,10 @@ window.onresize = () => {
     // Rescale canvas
     scale();
 };
+
+canvas.onmouseleave = () => {
+    isMouseDown = false;
+}
 
 canvas.addEventListener('mousemove', function(event) {
   mouseX = event.clientX;
