@@ -22,17 +22,21 @@ let isMouseDown;
 let isDraggingWindow;
 let dragOffsetX;
 let dragOffsetY;
-let windowHeaderHeight = 18;
+let windowHeaderHeight = 20;
 
 // Objects (but not actually)
-function window95(x, y, width, height, title) {
+function window95(x, y, width, height, title, name) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.title = title;
+    this.name = name;
+    this.icon = new Image(16, 16);
+    this.icon.src = 'apps/' + this.name + '/icon.png';
 
     this.drawWindow = function drawWindow() {
+        // Draw window
         ctx.fillStyle = windowDark;
         ctx.fillRect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
         ctx.fillStyle = windowColor;
@@ -43,14 +47,19 @@ function window95(x, y, width, height, title) {
         ctx.fillRect(this.x - 1, this.y - 1, this.width + 1, this.height + 1);
         ctx.fillStyle = windowColor;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        // Draw header
         ctx.fillStyle = windowHeader;
         ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, windowHeaderHeight);
+        // Draw icon
+        ctx.drawImage(this.icon, this.x + 4, this.y + 4, 16, 16);
+        // Write title
         ctx.font = 'bold 14px w95';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = windowHighlight;
-        ctx.fillText(this.title, this.x + 4, this.y + (windowHeaderHeight / 2) + 2);
+        ctx.fillText(this.title, this.x + 22, this.y + (windowHeaderHeight / 2) + 2);
     }
 
+    // Check dragging
     this.dragCheck = function dragCheck() {
         if (isMouseDown && isDraggingWindow) {
             this.x = mouseX - dragOffsetX;
@@ -64,13 +73,22 @@ function window95(x, y, width, height, title) {
             isDraggingWindow = false;
         }
     }
+
+    // Keep window in bounds
+    this.bound = function bound() {
+        if (this.x + this.width > window.innerWidth) {
+            this.x = window.innerWidth - this.width;
+        }
+    }
+
+    window.onresize = this.bound;
 }
 
 // Taskbar dimensions
 let taskbarHeight = 26;
 
 // Setup
-const testWindow = new window95(10, 10, 300, 200, 'My Computer');
+const testWindow = new window95(10, 10, 300, 200, 'My Computer', 'computer');
 
 // Draw
 draw();
@@ -90,6 +108,7 @@ function draw() {
     testWindow.drawWindow();
     testWindow.dragCheck();
 
+    // Next frame
     requestAnimationFrame(draw);
 }
 
