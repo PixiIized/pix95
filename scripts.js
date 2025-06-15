@@ -19,14 +19,19 @@ let windowHeader = '#010080';
 let mouseX;
 let mouseY;
 let isMouseDown;
-let isDraggingWindow;
-let dragOffsetX;
-let dragOffsetY;
-let windowHeaderHeight = 20;
+let draggingWindow = null;
+let windowHeaderHeight = 19;
+let taskbarHeight = 26;
 let allWindows = [];
 
-// Objects (but not actually)
+// Window
 function window95(x, y, width, height, title, name) {
+    // Local variables
+    let dragOffsetX;
+    let dragOffsetY;
+    let isDraggingWindow;
+
+    // Constructor variables
     this.x = x;
     this.y = y;
     this.width = width;
@@ -58,29 +63,44 @@ function window95(x, y, width, height, title, name) {
         ctx.textBaseline = 'middle';
         ctx.fillStyle = windowHighlight;
         ctx.fillText(this.title, this.x + 22, this.y + (windowHeaderHeight / 2) + 2);
+
+        // Drag check
+        this.dragCheck();
     }
 
     // Check dragging
     this.dragCheck = function dragCheck() {
-        if (isMouseDown && isDraggingWindow) {
-            this.x = mouseX - dragOffsetX;
-            this.y = mouseY - dragOffsetY;
-            isDraggingWindow = true;
-        } else if (isMouseDown && isMouseTouching(this)) {
-            dragOffsetX = mouseX - this.x;
-            dragOffsetY = mouseY - this.y;
-            isDraggingWindow = true;
-        } else {
-            isDraggingWindow = false;
+        this.dragCheck = function dragCheck() {
+            if (isMouseDown) {
+                if (draggingWindow === this) {
+                    this.x = mouseX - dragOffsetX;
+                    this.y = mouseY - dragOffsetY;
+                } else if (draggingWindow === null && isMouseTouching(this)) {
+                    dragOffsetX = mouseX - this.x;
+                    dragOffsetY = mouseY - this.y;
+                    draggingWindow = this;
+                }
+            } else if (draggingWindow === this) {
+                draggingWindow = null;
+            }
         }
+
+        this.bound();
     }
 
-    // Keep window in bounds
+    // Bound window
     this.bound = function bound() {
-        if (this.x + this.width / 2 > window.innerWidth) {
-            this.x = window.innerWidth - this.width / 2 - 8;
-        } else if (this.x + this.width / 2 < 0) {
-            this.x = 0 - this.width / 2;
+        if (this.x < 8) {
+            this.x = 8;
+        }
+        if (this.y < 8) {
+            this.y = 8;
+        }
+        if (this.x > window.innerWidth - 64) {
+            this.x = window.innerWidth - 64;
+        }
+        if (this.y > window.innerHeight - 64) {
+            this.y = window.innerHeight - 64;
         }
     }
 
@@ -88,15 +108,7 @@ function window95(x, y, width, height, title, name) {
     allWindows.push(this);
 }
 
-// Taskbar dimensions
-let taskbarHeight = 26;
-
-// Setup
-const testWindow = new window95(10, 10, 300, 200, 'My Computer', 'computer');
-
 // Draw
-draw();
-
 function draw() {
     ctx.clearRect(0, 0, width, height);
 
@@ -108,9 +120,10 @@ function draw() {
     ctx.fillStyle = windowColor;
     ctx.fillRect(0, height - taskbarHeight - 2,width, 1);
 
-    // Draw temp window
-    testWindow.drawWindow();
-    testWindow.dragCheck();
+    // Draw windows
+    for (const win of allWindows) {
+        win.drawWindow();
+    }
 
     // Next frame
     requestAnimationFrame(draw);
@@ -129,6 +142,7 @@ function scale() {
     ctx.scale(dpr, dpr);
 }
 
+// I realized "if then return true else then return false" is super redundant and uneeded, but I'll leave it in to annoy people :3
 function isMouseTouching(window) {
     if (mouseX >= window.x && mouseX <= window.x + window.width && mouseY >= window.y && mouseY <= window.y + windowHeaderHeight) {
         return true;
@@ -137,15 +151,23 @@ function isMouseTouching(window) {
     }
 }
 
+function isEdgeTouching(window95) {
+    if (window95.x + window95.width >= window.innerHeight) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // Listeners
 window.onresize = () => {
-    // Rescale canvas
-    scale();
-
     // Bound windows
     for (const win of allWindows) {
         win.bound();
     }
+
+    // Rescale canvas
+    scale();
 };
 
 canvas.addEventListener('mousemove', function(event) {
@@ -155,8 +177,26 @@ canvas.addEventListener('mousemove', function(event) {
 
 canvas.addEventListener("mousedown", function(event) {
     isMouseDown = true; 
+
+    for (let i = allWindows.length - 1; i >= 0; i--) {
+        if (isMouseTouching(allWindows[i])) {
+            // Move window to front
+            allWindows.push(allWindows.splice(i, 1)[0]);
+            break;
+        }
+    }
 });
 
 canvas.addEventListener("mouseup", function(event) {
     isMouseDown = false;
 });
+
+// Pix 95
+
+// Demo
+const myComputer = new window95(10, 10, 300, 200, 'My Computer', 'myComputer');
+const executable = new window95(50, 50, 300, 200, 'Executable', 'executable');
+const windowsExplorer = new window95(90, 90, 300, 200, 'Windows Explorer', 'windowsExplorer');
+
+// Draw
+draw();
