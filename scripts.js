@@ -1,3 +1,17 @@
+// Config
+const config = {
+    windowHeaderHeight: 19,
+    taskbarHeight: 26,
+    colors: {
+        pix95Background: '#008080',
+        windowColor: '#c0c0c0',
+        windowHighlight: '#ffffff',
+        windowShadow: '#606060',
+        windowDark: '#000000',
+        windowHeader: '#010080'
+    }
+};
+
 // Setup canvas
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -7,61 +21,54 @@ let width;
 let height;
 scale();
 
-//Colors
-let pix95Background = '#008080';
-let windowColor = '#c0c0c0';
-let windowHighlight = '#ffffff';
-let windowShadow = '#606060';
-let windowDark = '#000000';
-let windowHeader = '#010080';
+
 
 // Variables
-let mouseX;
-let mouseY;
-let isMouseDown;
-let draggingWindow = null;
-let windowHeaderHeight = 19;
-let taskbarHeight = 26;
-let allWindows = [];
+let mouseX, mouseY, isMouseDown, draggingWindow = null, topZ = 1, allWindows = [], sortedWindows = allWindows;
+let dragOffsetX = 0, dragOffsetY = 0;
 
 // Window
-function window95(x, y, width, height, title, name) {
-    // Local variables
-    let dragOffsetX;
-    let dragOffsetY;
+class window95 {
+    constructor(x, y, width, height, title, name) {
+        // Constructor variables
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.title = title;
+        this.name = name;
+        this.icon = new Image(16, 16);
+        this.icon.src = 'apps/' + this.name + '/icon.png';
+        this.dragOffsetX = 0;
+        this.dragOffsetY = 0;
+        this.zIndex = ++topZ;
 
-    // Constructor variables
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.title = title;
-    this.name = name;
-    this.icon = new Image(16, 16);
-    this.icon.src = 'apps/' + this.name + '/icon.png';
+        // Add to window array
+        allWindows.push(this);
+    }
 
-    this.drawWindow = function drawWindow() {
+    drawWindow() {
         // Draw window
-        ctx.fillStyle = windowDark;
+        ctx.fillStyle = config.colors.windowDark;
         ctx.fillRect(this.x - 2, this.y - 2, this.width + 4, this.height + 4);
-        ctx.fillStyle = windowColor;
+        ctx.fillStyle = config.colors.windowColor;
         ctx.fillRect(this.x - 2, this.y - 2, this.width + 3, this.height + 3);
-        ctx.fillStyle = windowShadow;
+        ctx.fillStyle = config.colors.windowShadow;
         ctx.fillRect(this.x - 1, this.y - 1, this.width + 2, this.height + 2);
-        ctx.fillStyle = windowHighlight;
+        ctx.fillStyle = config.colors.windowHighlight;
         ctx.fillRect(this.x - 1, this.y - 1, this.width + 1, this.height + 1);
-        ctx.fillStyle = windowColor;
+        ctx.fillStyle = config.colors.windowColor;
         ctx.fillRect(this.x, this.y, this.width, this.height);
         // Draw header
-        ctx.fillStyle = windowHeader;
-        ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, windowHeaderHeight);
+        ctx.fillStyle = config.colors.windowHeader;
+        ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, config.windowHeaderHeight);
         // Draw icon
         ctx.drawImage(this.icon, this.x + 4, this.y + 4, 16, 16);
         // Write title
         ctx.font = 'bold 14px w95';
         ctx.textBaseline = 'middle';
-        ctx.fillStyle = windowHighlight;
-        ctx.fillText(this.title, this.x + 22, this.y + (windowHeaderHeight / 2) + 2);
+        ctx.fillStyle = config.colors.windowHighlight;
+        ctx.fillText(this.title, this.x + 22, this.y + (config.windowHeaderHeight / 2) + 2);
 
         // Drag check
         this.dragCheck();
@@ -69,59 +76,35 @@ function window95(x, y, width, height, title, name) {
     }
 
     // Check dragging
-    this.dragCheck = function dragCheck() {
-        this.dragCheck = function dragCheck() {
-            if (isMouseDown) {
-                if (draggingWindow === this) {
-                    this.x = mouseX - dragOffsetX;
-                    this.y = mouseY - dragOffsetY;
-                } else if (draggingWindow === null && isMouseTouching(this)) {
-                    dragOffsetX = mouseX - this.x;
-                    dragOffsetY = mouseY - this.y;
-                    draggingWindow = this;
-                }
-            } else if (draggingWindow === this) {
-                draggingWindow = null;
-            }
+    dragCheck() {
+        if (isMouseDown && draggingWindow === this) {
+            this.x = mouseX - dragOffsetX;
+            this.y = mouseY - dragOffsetY;
         }
     }
 
     // Bound window
-    this.bound = function bound() {
-        if (this.x < 8) {
-            this.x = 8;
-        }
-        if (this.y < 8) {
-            this.y = 8;
-        }
-        if (this.x > window.innerWidth - 64) {
-            this.x = window.innerWidth - 64;
-        }
-        if (this.y > window.innerHeight - 64) {
-            this.y = window.innerHeight - 64;
-        }
+    bound() {
+        this.x = Math.min(Math.max(this.x, 0 - this.width + 64), window.innerWidth - 64);
+        this.y = Math.min(Math.max(this.y, 0), window.innerHeight - 25 - config.taskbarHeight);
     }
-
-    // Add to window array
-    allWindows.push(this);
 }
 
 // Draw
 function draw() {
+    // Clear screen
     ctx.clearRect(0, 0, width, height);
 
-    // Draw taskbar
-    ctx.fillStyle = windowColor;
-    ctx.fillRect(0, height - taskbarHeight, width, height);
-    ctx.fillStyle = windowHighlight;
-    ctx.fillRect(0, height - taskbarHeight - 1, width, 1);
-    ctx.fillStyle = windowColor;
-    ctx.fillRect(0, height - taskbarHeight - 2,width, 1);
+    // Sort windows
+    sortedWindows = [...allWindows].sort((a, b) => a.zIndex - b.zIndex);
 
     // Draw windows
-    for (const win of allWindows) {
+    for (const win of sortedWindows) {
         win.drawWindow();
     }
+
+    // Draw taskbar
+    drawTaskbar();
 
     // Next frame
     requestAnimationFrame(draw);
@@ -137,24 +120,21 @@ function scale() {
     canvas.style.width = width + "px";
     canvas.style.height = height + "px";
 
+    ctx.setTransform(1, 0, 0, 1, 0, 0); 
     ctx.scale(dpr, dpr);
 }
 
-// I realized "if then return true else then return false" is super redundant and uneeded, but I'll leave it in to annoy people :3
-function isMouseTouching(window) {
-    if (mouseX >= window.x && mouseX <= window.x + window.width && mouseY >= window.y && mouseY <= window.y + windowHeaderHeight) {
-        return true;
-    } else {
-        return false;
-    }
+function isMouseOnHeader({ x, y, width }) {
+    return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + config.windowHeaderHeight;
 }
 
-function isEdgeTouching(window95) {
-    if (window95.x + window95.width >= window.innerHeight) {
-        return true;
-    } else {
-        return false;
-    }
+function drawTaskbar() {
+    ctx.fillStyle = config.colors.windowColor;
+    ctx.fillRect(0, height - config.taskbarHeight, width, height);
+    ctx.fillStyle = config.colors.windowHighlight;
+    ctx.fillRect(0, height - config.taskbarHeight - 1, width, 1);
+    ctx.fillStyle = config.colors.windowColor;
+    ctx.fillRect(0, height - config.taskbarHeight - 2,width, 1);
 }
 
 // Listeners
@@ -180,17 +160,29 @@ canvas.addEventListener('mousemove', function(event) {
 canvas.addEventListener("mousedown", function(event) {
     isMouseDown = true; 
 
-    for (let i = allWindows.length - 1; i >= 0; i--) {
-        if (isMouseTouching(allWindows[i])) {
-            // Move window to front
-            allWindows.push(allWindows.splice(i, 1)[0]);
-            break;
+    // Handle Z
+    let topWindow = null;
+    let highestZ = -Infinity;
+
+    for (const win of allWindows) {
+        if (isMouseOnHeader(win) && win.zIndex > highestZ) {
+            topWindow = win;
+            highestZ = win.zIndex;
         }
+    }
+
+    // Dragging
+    if (topWindow) {
+        dragOffsetX = mouseX - topWindow.x;
+        dragOffsetY = mouseY - topWindow.y;
+        topWindow.zIndex = ++topZ;
+        draggingWindow = topWindow;
     }
 });
 
 canvas.addEventListener("mouseup", function(event) {
     isMouseDown = false;
+    draggingWindow = null;
 });
 
 // Pix 95
@@ -201,4 +193,4 @@ const executable = new window95(50, 50, 300, 200, 'Executable', 'executable');
 const windowsExplorer = new window95(90, 90, 300, 200, 'Windows Explorer', 'windowsExplorer');
 
 // Draw
-draw();
+requestAnimationFrame(draw);
