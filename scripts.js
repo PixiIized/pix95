@@ -2,6 +2,9 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 ctx.imageSmoothingEnabled = false;
+let dpr;
+let width;
+let height;
 scale();
 
 //Colors
@@ -73,15 +76,15 @@ const testWindow = new window95(10, 10, 300, 200, 'My Computer');
 draw();
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, width, height);
 
     // Draw taskbar
     ctx.fillStyle = windowColor;
-    ctx.fillRect(0, canvas.height - taskbarHeight, canvas.width, canvas.height);
+    ctx.fillRect(0, height - taskbarHeight, width, height);
     ctx.fillStyle = windowHighlight;
-    ctx.fillRect(0, canvas.height - taskbarHeight - 1, canvas.width, 1);
+    ctx.fillRect(0, height - taskbarHeight - 1, width, 1);
     ctx.fillStyle = windowColor;
-    ctx.fillRect(0, canvas.height - taskbarHeight - 2, canvas.width, 1);
+    ctx.fillRect(0, height - taskbarHeight - 2,width, 1);
 
     // Draw temp window
     testWindow.drawWindow();
@@ -92,8 +95,15 @@ function draw() {
 
 // Functions
 function scale() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    dpr = window.devicePixelRatio * 4 || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+
+    ctx.scale(dpr, dpr);
 }
 
 function isMouseTouching(window) {
