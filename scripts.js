@@ -23,6 +23,7 @@ let isDraggingWindow;
 let dragOffsetX;
 let dragOffsetY;
 let windowHeaderHeight = 20;
+let allWindows = [];
 
 // Objects (but not actually)
 function window95(x, y, width, height, title, name) {
@@ -76,12 +77,15 @@ function window95(x, y, width, height, title, name) {
 
     // Keep window in bounds
     this.bound = function bound() {
-        if (this.x + this.width > window.innerWidth) {
-            this.x = window.innerWidth - this.width;
+        if (this.x + this.width / 2 > window.innerWidth) {
+            this.x = window.innerWidth - this.width / 2 - 8;
+        } else if (this.x + this.width / 2 < 0) {
+            this.x = 0 - this.width / 2;
         }
     }
 
-    window.onresize = this.bound;
+    // Add to window array
+    allWindows.push(this);
 }
 
 // Taskbar dimensions
@@ -134,7 +138,15 @@ function isMouseTouching(window) {
 }
 
 // Listeners
-window.onresize = scale;
+window.onresize = () => {
+    // Rescale canvas
+    scale();
+
+    // Bound windows
+    for (const win of allWindows) {
+        win.bound();
+    }
+};
 
 canvas.addEventListener('mousemove', function(event) {
   mouseX = event.clientX;
