@@ -10,9 +10,27 @@ html, body {
     overflow: hidden;
 }
 
+/* Fonts */
+@font-face {
+    font-family: w95;
+    src: url(assets/fonts/W95font.otf);
+}
+
+@font-face {
+    font-family: w95;
+    src: url(assets/fonts/W95font-Bold.otf);
+    font-weight: bold;
+}
+
 /* Canvas */
 #canvas {
     background-color: var(--pix95-background);
     display: block;
     image-rendering: pixelated;
+    font-family: w95;
+}
+
+/* Cursors */
+* {
+    cursor: url(assets/cursors/arrow.cur), default;
 }
