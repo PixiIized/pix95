@@ -21,8 +21,6 @@ let width;
 let height;
 scale();
 
-
-
 // Variables
 let mouseX, mouseY, isMouseDown, draggingWindow = null, topZ = 1, allWindows = [], sortedWindows = allWindows;
 let dragOffsetX = 0, dragOffsetY = 0;
