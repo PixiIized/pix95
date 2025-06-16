@@ -18,7 +18,7 @@ Fonts:
  - Ari-W9500 by Catterio Sylt
 
 Icons:
-   - All current icons are made by Microsoft
+ - All current icons are made by Microsoft
 
 Tools and Resources Used:
  - v86 by Copy on GitHub
