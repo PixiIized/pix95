@@ -1,5 +1,5 @@
 The code is written by me
-The Z-Index sorting code was written by ChatGPT because my brain is tiny and I couldn't figure it out.
+The Z-Index sorting code was based off of a chatGPT script (I'm sorry I'm stupid).
 
 I used this website as reference for the design: https://copy.sh/v86/?profile=windows95
 I made this in VSCode.
