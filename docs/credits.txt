@@ -1,0 +1,27 @@
+Project Title: Pix 95
+
+Developed By:
+ - Pixilized
+
+Inspired By:
+ - Windows 95 (c) Microsoft 1995-2025
+
+Made Using:
+ - HTML5
+ - CSS3
+ - JavaScript
+
+Tools and Resources Used:
+ - v86 by Copy on GitHub
+ - Eyedropper Chrome Extension by eyedropper.org
+
+Special thanks:
+ - Barney86
+    - Without that whole XP argument I never would have been so into 95
+ - SoupleCodes
+    - You helped with the CSS of a scrapped version, but it was help nonetheless
+ - You!
+    - Thanks for taking the time to even open credits.txt
+
+DISCLAIMER:
+ - I'm sorry to admit that a portion of the z-indexing code was based off of a ChatGPT generated script
