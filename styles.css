@@ -13,12 +13,23 @@ html, body {
 /* Fonts */
 @font-face {
     font-family: w95;
-    src: url(assets/fonts/W95font.otf);
+    src: url(assets/fonts/W95FA.otf);
 }
 
 @font-face {
     font-family: w95;
     src: url(assets/fonts/W95font-Bold.otf);
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: w9500;
+    src: url(assets/fonts/ari-w9500.otf);
+}
+
+@font-face {
+    font-family: w9500;
+    src: url(assets/fonts/ari-w9500-bold.otf);
     font-weight: bold;
 }
 
