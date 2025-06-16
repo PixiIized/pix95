@@ -11,6 +11,15 @@ Made Using:
  - CSS3
  - JavaScript
 
+Fonts:
+ - W95FA by Alina Sava
+ - W95font by Arne Sava
+   - These two may be the same person, I'm not sure
+ - Ari-W9500 by Catterio Sylt
+
+Icons:
+   - All current icons are made by Microsoft
+
 Tools and Resources Used:
  - v86 by Copy on GitHub
  - Eyedropper Chrome Extension by eyedropper.org
