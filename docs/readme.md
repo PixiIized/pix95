@@ -10,9 +10,9 @@ I've done my best to make app developement in this project as easy as it can be.
 You can use this for anything you want.
 You could make a personal website where everything is an app, you could develop games for this, and you could even try to develop this project further into a full blown mock OS with every feature you could want!
 
-# Can I sell what I make with this?
+# Can I sell what I make for this?
 You may not sell any code from Pix 95 itself, but you can absolutely sell any apps you make for it.
-And try to tell me about anything you make, I'd love to see what it can do!
+And try to tell me about anything you make, I'd love to see its limitations!
 
 # Why did you make this?
 I'll be honest, I really don't know.
