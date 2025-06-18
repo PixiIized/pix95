@@ -13,23 +13,12 @@ html, body {
 /* Fonts */
 @font-face {
     font-family: w95;
-    src: url(assets/fonts/W95FA.otf);
+    src: url(./assets/fonts/W95FA.otf);
 }
 
 @font-face {
     font-family: w95;
-    src: url(assets/fonts/W95font-Bold.otf);
-    font-weight: bold;
-}
-
-@font-face {
-    font-family: w9500;
-    src: url(assets/fonts/ari-w9500.otf);
-}
-
-@font-face {
-    font-family: w9500;
-    src: url(assets/fonts/ari-w9500-bold.otf);
+    src: url(./assets/fonts/W95font-Bold.otf);
     font-weight: bold;
 }
 
@@ -45,5 +34,5 @@ html, body {
 
 /* Cursors */
 * {
-    cursor: url(assets/cursors/arrow.cur), default;
+    cursor: url(./assets/cursors/arrow.cur), default;
 }
